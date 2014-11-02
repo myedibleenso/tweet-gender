@@ -27,7 +27,7 @@ Running the code:
 
 3. Run the classifier:
 
-  `python genderpredictor.py path/to/your/file`
+  `python genderanalyzer.py path/to/your/file`
 
 
 By default, tweets are labeled using a NaiveBayes classifier.  There are also methods to generate precision, recall, and f1 scores for a label (i.e. "male" or "female").
