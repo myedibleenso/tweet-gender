@@ -139,6 +139,7 @@ class Classifier(MultiClassifierI):
         self.verbose = verbose
 
     def train(self, training_data):
+        self.training_data = training_data
         self._classifier = self._classifier.train(training_data)
 
     def classify(self, datum):
