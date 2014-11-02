@@ -13,11 +13,15 @@ if __name__ == "__main__":
         print("No file name specified!\n\nUSAGE:\n\tpython genderanalyzer.py /path/to/file/to/classify")
         sys.exit(0)
 
-    to_classify = sys.argv[-1]
-    classifier = Classifier.load()
-    print type(classifier)
     fe = FeatureExtractor()
-    with open(expanduser(to_classify), "r") as infile:
+    to_classify = sys.argv[-1]
+    try: # attempt to load pickled classifier
+        classifier = Classifier.load()
+    except: # train from scratch if there's a problem...
+        classifier = Classifier(NaiveBayesClassifier)
+        classifier.train(fe.prepare_training_data())
+
+    with open(os.path.expanduser(to_classify), "r") as infile:
         for line in infile:
             tweet = Tweet(json.loads(line))
             feature_vector = fe.tweet2features(tweet)

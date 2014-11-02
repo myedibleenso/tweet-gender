@@ -2,7 +2,7 @@ from __future__ import unicode_literals, division # the pains of Python 2.X
 from processor import processor
 from nltk.classify import *
 from tweet import *
-from os.path import expanduser
+import os
 import re
 try:
    import cPickle as pickle
@@ -13,13 +13,14 @@ class FeatureExtractor(object):
 
     def __init__(self, verbose=False):
         self.verbose = verbose
+        self.training_file = "tweets_by_gender.txt"
 
     def mumble(self, sometext):
         if self.verbose:
             print sometext
 
-    def prepare_training_data(self):
-        tweets = [Tweet(json.loads(line)) for line in open("tweets_by_gender.txt", "r")]
+    def prepare_training_data(self, training_file = None):
+        tweets = [Tweet(json.loads(line)) for line in open(training_file or self.training_file, "r")]
         return [self.training_tweet(tweet) for tweet in tweets]
         #self.male = filter(lambda t: t.gender == "male", self.tweets)
         #self.female = filter(lambda t: t.gender == "female", self.tweets)
@@ -110,11 +111,11 @@ class FeatureExtractor(object):
 
 class Classifier(MultiClassifierI):
 
-    default_fname="gender-classifier.pickle"
+    default_fname= os.path.join("models", "gender-classifier.pickle")
 
     @staticmethod
     def load(fname=default_fname):
-        load_from = expanduser(fname)
+        load_from = os.path.expanduser(fname)
 
         with open(load_from) as data:
             classifier = pickle.load(data)
@@ -125,7 +126,7 @@ class Classifier(MultiClassifierI):
         '''
         pickle classifier to some file
         '''
-        save_to = expanduser(fname)
+        save_to = os.path.expanduser(fname)
         with open(save_to,'wb') as out:
             pickle.dump(classifier, out)
         print "classifier saved to {0}".format(save_to)
@@ -157,7 +158,7 @@ class Classifier(MultiClassifierI):
 
     def _choose_file(self, fname):
         if fname:
-            fname = expanduser(fname)
+            fname = os.path.expanduser(fname)
 
         return fname or self.fname
 
